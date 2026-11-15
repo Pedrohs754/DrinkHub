@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e0542f"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="DrinkHub"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png">
+<title>DrinkHub</title>
+<style>html{-webkit-text-size-adjust:100%}*{-webkit-tap-highlight-color:transparent}button{touch-action:manipulation}.chip{min-height:40px}.card{min-height:56px}nav button{min-height:52px}.item input{width:24px;height:24px}.back{min-height:44px}</style>
+<style>
+:root{--bg:#fbf7f2;--card:#fff;--tx:#2a2220;--mu:#7a6e69;--ac:#e0542f;--ac2:#fde6dd;--bd:#eadfd6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1614;--card:#272120;--tx:#f4ece7;--mu:#a89b94;--ac:#ff7a55;--ac2:#3b2a24;--bd:#3a302d}}
+:root[data-theme="dark"]{--bg:#1b1614;--card:#272120;--tx:#f4ece7;--mu:#a89b94;--ac:#ff7a55;--ac2:#3b2a24;--bd:#3a302d}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:640px;margin-inline:auto;padding-bottom:70px}
+header{padding:16px 16px 4px}
+h1{margin:0;font-size:24px}
+.sub{color:var(--mu);font-size:13px}
+input[type=search]{width:100%;margin:10px 0 0;padding:11px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:8px 0 6px}
+.lbl{font-size:12px;color:var(--mu);padding:4px 16px 2px;text-transform:uppercase;letter-spacing:.05em}
+.row{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 6px;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:7px 14px;border-radius:99px;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.list{padding:8px 16px;display:grid;gap:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:13px 14px;cursor:pointer;text-align:left;color:var(--tx);font:inherit;width:100%}
+.card b{font-size:17px;display:block}
+.meta{color:var(--mu);font-size:13px;margin-top:3px}
+.tag{display:inline-block;background:var(--ac2);color:var(--ac);border-radius:8px;padding:1px 8px;font-size:12px;margin:6px 4px 0 0}
+.empty{text-align:center;color:var(--mu);padding:40px 16px}
+.det{padding:12px 16px}
+.back{background:none;border:0;color:var(--ac);font-size:16px;padding:6px 0;cursor:pointer}
+.det h2{margin:6px 0 2px;font-size:26px}
+.det h3{margin:20px 0 6px;font-size:16px}
+.det ol,.det ul{padding-left:22px;margin:0}
+.det li{margin:6px 0}
+.btn{display:block;width:100%;margin-top:18px;padding:13px;border:0;border-radius:12px;background:var(--ac);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+.item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
+.item.done span{text-decoration:line-through;color:var(--mu)}
+.item span{flex:1}
+.item input{width:20px;height:20px;accent-color:var(--ac)}
+.x{background:none;border:0;color:var(--mu);font-size:18px;cursor:pointer}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;max-width:640px;margin:auto;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:14px;border:0;background:none;color:var(--mu);font-size:15px;cursor:pointer}
+nav button.on{color:var(--ac);font-weight:700}
+.clr{background:none;border:0;color:var(--ac);font-size:14px;padding:8px 16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav><button id="t1" class="on">🍹 Drinks</button><button id="t2">🛒 Lista de compras</button></nav>
+<script>
+// [nome, base, tem álcool, [ingrediente principal], [ingredientes], [passo a passo]]
+const D=[
+["Sex on the Beach","Vodka",1,["Laranja","Cranberry"],["50 ml de vodka","20 ml de licor de pêssego","60 ml de suco de laranja","60 ml de suco de cranberry","Gelo"],["Encha um copo alto com gelo.","Coloque a vodka e o licor de pêssego.","Complete com o suco de laranja.","Finalize com o suco de cranberry bem devagar.","Decore com uma fatia de laranja."]],
+["Caipirinha","Cachaça",1,["Limão"],["1 limão","2 colheres de açúcar","50 ml de cachaça","Gelo"],["Corte o limão em pedaços, sem o miolo branco.","Macere com o açúcar no copo.","Adicione a cachaça e bastante gelo.","Misture bem."]],
+["Caipiroska","Vodka",1,["Limão"],["1 limão","2 colheres de açúcar","50 ml de vodka","Gelo"],["Corte o limão em pedaços.","Macere com o açúcar no copo.","Adicione a vodka e o gelo.","Misture bem."]],
+["Mojito","Rum",1,["Hortelã","Limão"],["50 ml de rum branco","1 limão","2 colheres de açúcar","10 folhas de hortelã","Água com gás","Gelo"],["Macere levemente a hortelã com o açúcar e o limão.","Adicione o rum e o gelo.","Complete com água com gás.","Misture com delicadeza."]],
+["Gin Tônica","Gin",1,["Limão"],["50 ml de gin","150 ml de água tônica","Gelo","1 rodela de limão"],["Encha uma taça com gelo.","Adicione o gin.","Complete com a tônica devagar.","Decore com o limão."]],
+["Gin Fizz","Gin",1,["Limão"],["50 ml de gin","25 ml de suco de limão","2 colheres de açúcar","Água com gás","Gelo"],["Bata o gin, o limão e o açúcar na coqueteleira com gelo.","Coe num copo com gelo.","Complete com água com gás."]],
+["Piña Colada","Rum",1,["Abacaxi","Coco"],["50 ml de rum branco","100 ml de suco de abacaxi","50 ml de leite de coco","Gelo","1 fatia de abacaxi"],["Bata tudo no liquidificador com gelo.","Sirva em copo alto.","Decore com a fatia de abacaxi."]],
+["Moscow Mule","Vodka",1,["Limão","Gengibre"],["50 ml de vodka","10 ml de suco de limão","120 ml de ginger beer","Gelo","Hortelã para decorar"],["Coloque gelo na caneca.","Adicione a vodka e o limão.","Complete com ginger beer.","Decore com hortelã."]],
+["Margarita","Tequila",1,["Limão"],["50 ml de tequila","25 ml de licor de laranja","25 ml de suco de limão","Sal para a borda","Gelo"],["Passe limão na borda da taça e coloque o sal.","Bata tudo na coqueteleira com gelo.","Coe na taça."]],
+["Tequila Sunrise","Tequila",1,["Laranja"],["50 ml de tequila","100 ml de suco de laranja","15 ml de grenadine","Gelo"],["Coloque a tequila e o suco de laranja no copo com gelo.","Adicione a grenadine devagar, ela desce e forma o degradê."]],
+["Cosmopolitan","Vodka",1,["Cranberry","Limão"],["40 ml de vodka","15 ml de licor de laranja","30 ml de suco de cranberry","10 ml de suco de limão","Gelo"],["Bata tudo na coqueteleira com gelo.","Coe numa taça gelada."]],
+["Blue Lagoon","Vodka",1,["Limão"],["40 ml de vodka","20 ml de curaçao azul","100 ml de limonada ou Sprite","Gelo"],["Coloque gelo no copo.","Adicione a vodka e o curaçao azul.","Complete com a limonada."]],
+["Daiquiri de Morango","Rum",1,["Morango","Limão"],["50 ml de rum branco","6 morangos","25 ml de suco de limão","2 colheres de açúcar","Gelo"],["Bata tudo no liquidificador com gelo.","Sirva numa taça."]],
+["Negroni","Gin",1,["Laranja"],["30 ml de gin","30 ml de Campari","30 ml de vermute tinto","Gelo","1 casca de laranja"],["Misture tudo num copo baixo com gelo.","Decore com a casca de laranja."]],
+["Whisky Sour","Whisky",1,["Limão"],["50 ml de whisky","25 ml de suco de limão","15 ml de xarope de açúcar","Gelo"],["Bata tudo na coqueteleira com gelo.","Coe num copo com gelo."]],
+["Old Fashioned","Whisky",1,["Laranja"],["50 ml de whisky","1 colher de açúcar","2 gotas de angostura","Gelo","1 casca de laranja"],["Dissolva o açúcar com a angostura no copo.","Adicione o whisky e o gelo.","Misture e decore com a casca de laranja."]],
+["Batida de Maracujá","Cachaça",1,["Maracujá"],["50 ml de cachaça","1 maracujá","50 ml de leite condensado","Gelo"],["Bata tudo no liquidificador.","Coe se quiser sem sementes.","Sirva gelada."]],
+["Batida de Coco","Cachaça",1,["Coco"],["50 ml de cachaça","100 ml de leite de coco","50 ml de leite condensado","Gelo"],["Bata tudo no liquidificador.","Sirva gelada."]],
+["Sex on the Beach (sem álcool)","Sem álcool",0,["Laranja","Cranberry","Abacaxi"],["60 ml de suco de abacaxi","60 ml de suco de laranja","60 ml de suco de cranberry","Gelo"],["Coloque gelo num copo alto.","Adicione o suco de abacaxi e o de laranja.","Finalize com o cranberry devagar."]],
+["Virgin Colada","Sem álcool",0,["Abacaxi","Coco"],["100 ml de suco de abacaxi","50 ml de leite de coco","Gelo","1 fatia de abacaxi"],["Bata tudo no liquidificador com gelo.","Decore com a fatia de abacaxi."]],
+["Mojito sem álcool","Sem álcool",0,["Hortelã","Limão"],["1 limão","10 folhas de hortelã","2 colheres de açúcar","Água com gás","Gelo"],["Macere a hortelã com o limão e o açúcar.","Adicione gelo.","Complete com água com gás."]],
+["Abacaxi com Hortelã","Sem álcool",0,["Abacaxi","Hortelã"],["200 ml de suco de abacaxi","8 folhas de hortelã","Gelo"],["Bata o abacaxi com a hortelã no liquidificador.","Sirva com gelo."]],
+["Limonada de Morango","Sem álcool",0,["Morango","Limão","Hortelã"],["5 morangos","2 limões","3 colheres de açúcar","Água","Hortelã","Gelo"],["Bata os morangos com o suco de limão, o açúcar e a água.","Sirva com gelo e hortelã."]],
+["Sunrise sem álcool","Sem álcool",0,["Laranja"],["150 ml de suco de laranja","15 ml de grenadine","Gelo"],["Coloque o suco de laranja com gelo.","Adicione a grenadine devagar para formar o degradê."]],
+["Shirley Temple","Sem álcool",0,["Limão","Gengibre"],["150 ml de ginger ale","15 ml de grenadine","1 fatia de limão","Gelo"],["Coloque gelo no copo.","Adicione o ginger ale e a grenadine.","Decore com o limão."]]
+];
+const add=(n,b,a,t,i,s)=>{if(!D.some(d=>d[0]==n))D.push([n,b,a,t,i,s])};
+[["Aperol Spritz","Outros",["Laranja"],["60 ml de Aperol","90 ml de espumante","30 ml de água com gás","Gelo","1 fatia de laranja"],["Coloque gelo numa taça.","Adicione o Aperol e o espumante.","Complete com água com gás e misture.","Decore com a laranja."]],
+["Bloody Mary","Vodka",["Tomate","Limão"],["50 ml de vodka","100 ml de suco de tomate","10 ml de suco de limão","Molho inglês e pimenta","Sal e gelo"],["Coloque gelo no copo.","Adicione a vodka, o suco de tomate e o limão.","Tempere com molho inglês, pimenta e sal.","Misture bem."]],
+["Cuba Libre","Rum",["Limão"],["50 ml de rum","150 ml de Coca-Cola","1/2 limão","Gelo"],["Coloque gelo no copo.","Esprema o limão e adicione o rum.","Complete com a Coca-Cola e misture."]],
+["Long Island Iced Tea","Vodka",["Limão"],["15 ml de vodka","15 ml de gin","15 ml de rum","15 ml de tequila","15 ml de licor de laranja","25 ml de suco de limão","Coca-Cola","Gelo"],["Coloque gelo no copo alto.","Adicione todas as bebidas e o limão.","Complete com Coca-Cola e misture."]],
+["Espresso Martini","Vodka",["Café"],["50 ml de vodka","30 ml de licor de café","1 café expresso","Gelo"],["Bata tudo na coqueteleira com gelo.","Coe numa taça gelada."]],
+["Dry Martini","Gin",["Azeitona"],["60 ml de gin","10 ml de vermute seco","Gelo","1 azeitona"],["Misture o gin e o vermute com gelo.","Coe numa taça gelada.","Decore com a azeitona."]],
+["Manhattan","Whisky",["Cereja"],["50 ml de whisky","25 ml de vermute tinto","2 gotas de angostura","Gelo","1 cereja"],["Misture tudo com gelo.","Coe numa taça gelada.","Decore com a cereja."]],
+["Mai Tai","Rum",["Limão","Laranja"],["40 ml de rum","15 ml de licor de laranja","20 ml de suco de limão","10 ml de xarope de amêndoa","Gelo"],["Bata tudo na coqueteleira com gelo.","Coe num copo baixo com gelo."]],
+["Paloma","Tequila",["Toranja","Limão"],["50 ml de tequila","100 ml de suco de toranja","10 ml de suco de limão","Água com gás","Sal e gelo"],["Passe sal na borda do copo.","Adicione gelo, a tequila, a toranja e o limão.","Complete com água com gás e misture."]],
+["Gimlet","Gin",["Limão"],["50 ml de gin","25 ml de suco de limão","15 ml de xarope de açúcar","Gelo"],["Bata tudo na coqueteleira com gelo.","Coe numa taça gelada."]],
+["Tom Collins","Gin",["Limão"],["50 ml de gin","25 ml de suco de limão","15 ml de xarope de açúcar","Água com gás","Gelo"],["Coloque gelo no copo alto.","Adicione o gin, o limão e o xarope.","Complete com água com gás e misture."]],
+["White Russian","Vodka",["Café"],["50 ml de vodka","25 ml de licor de café","30 ml de creme de leite","Gelo"],["Coloque gelo num copo baixo.","Adicione a vodka e o licor de café.","Finalize com o creme de leite e misture."]],
+["Screwdriver","Vodka",["Laranja"],["50 ml de vodka","150 ml de suco de laranja","Gelo"],["Coloque gelo no copo alto.","Adicione a vodka e o suco de laranja.","Misture bem."]],
+["Dark n Stormy","Rum",["Gengibre","Limão"],["50 ml de rum escuro","120 ml de ginger beer","10 ml de suco de limão","Gelo"],["Coloque gelo no copo alto.","Adicione o limão e a ginger beer.","Finalize com o rum escuro por cima."]]
+].forEach(([n,b,t,i,s])=>add(n,b,1,t,i,s));
+[["Gelo de Maracujá","Maracujá","200 ml de suco de maracujá"],["Gelo de Morango","Morango","6 morangos batidos com 150 ml de água"],["Gelo de Melancia","Melancia","200 g de melancia batida"],["Gelo de Abacaxi","Abacaxi","200 ml de suco de abacaxi"],["Gelo de Água de Coco","Coco","200 ml de água de coco"],["Gelo de Energético","Energético","200 ml de energético tropical"],["Gelo de Café","Café","200 ml de café coado frio"]].forEach(([n,f,i])=>add(n,"Sem álcool",0,["Gelo saborizado",f],[i,"Forma de gelo"],["Encha a forma de gelo com a mistura.","Leve ao freezer por 4 horas.","Use no lugar do gelo comum."]));
+add("Gelo de Limão e Hortelã","Sem álcool",0,["Gelo saborizado","Limão","Hortelã"],["200 ml de água","1 limão em rodelas","10 folhas de hortelã","Forma de gelo"],["Coloque uma rodela de limão e uma folha de hortelã em cada espaço da forma.","Complete com água.","Leve ao freezer por 4 horas."]);
+add("Gin Tônica com Gelo de Morango","Gin",1,["Gelo saborizado","Morango"],["50 ml de gin","150 ml de água tônica","Cubos de gelo de morango"],["Encha uma taça com os cubos de gelo de morango.","Adicione o gin.","Complete com a tônica devagar."]);
+add("Vodka com Gelo de Maracujá","Vodka",1,["Gelo saborizado","Maracujá"],["50 ml de vodka","150 ml de água com gás","Cubos de gelo de maracujá"],["Encha um copo alto com os cubos de gelo de maracujá.","Adicione a vodka.","Complete com água com gás e misture."]);
+add("Gin com Gelo de Limão e Hortelã","Gin",1,["Gelo saborizado","Limão","Hortelã"],["50 ml de gin","150 ml de água tônica","Cubos de gelo de limão e hortelã"],["Encha uma taça com os cubos de gelo.","Adicione o gin.","Complete com a tônica."]);
+add("Vodka com Energético e Gelo de Energético","Vodka",1,["Energético","Gelo saborizado"],["50 ml de vodka","200 ml de energético","Cubos de gelo de energético"],["Encha um copo alto com os cubos de gelo de energético.","Adicione a vodka.","Complete com energético e misture."]);
+add("Água com Gás com Gelo de Melancia","Sem álcool",0,["Gelo saborizado","Melancia"],["250 ml de água com gás","Cubos de gelo de melancia","1 fatia de limão"],["Encha um copo alto com os cubos de gelo de melancia.","Complete com água com gás.","Decore com a fatia de limão."]);
+add("Copão de Gin Tropical","Gin",1,["Copão","Abacaxi","Energético"],["100 ml de gin","250 ml de energético tropical","3 fatias de abacaxi","Cubos de gelo de maracujá"],["Encha o copão com os cubos de gelo.","Coloque as fatias de abacaxi.","Adicione o gin.","Complete com o energético e misture."]);
+add("Copão de Vodka com Frutas Vermelhas","Vodka",1,["Copão","Morango","Framboesa","Energético"],["100 ml de vodka","250 ml de energético","8 morangos","10 framboesas","Gelo"],["Corte os morangos ao meio.","Coloque as frutas e bastante gelo no copão.","Adicione a vodka.","Complete com o energético e misture."]);
+add("Copão de Gin com Morango e Tônica","Gin",1,["Copão","Morango"],["100 ml de gin","300 ml de água tônica","6 morangos","1 limão em rodelas","Gelo"],["Corte os morangos ao meio.","Coloque as frutas, as rodelas de limão e o gelo no copão.","Adicione o gin.","Complete com a tônica e misture."]);
+add("Copão de Vodka com Melancia","Vodka",1,["Copão","Melancia"],["100 ml de vodka","200 g de melancia","25 ml de suco de limão","150 ml de água com gás","Gelo"],["Bata a melancia no liquidificador.","Coloque gelo no copão.","Adicione a vodka, o suco de melancia e o limão.","Complete com água com gás e misture."]);
+add("Copão de Rum com Maracujá","Rum",1,["Copão","Maracujá"],["100 ml de rum branco","2 maracujás","1 limão","2 colheres de açúcar","150 ml de água com gás","Gelo"],["Macere o maracujá com o limão e o açúcar no copão.","Adicione gelo e o rum.","Complete com água com gás e misture."]);
+add("Copão sem álcool de Frutas Vermelhas","Sem álcool",0,["Copão","Morango","Framboesa"],["6 morangos","10 framboesas","1 limão","300 ml de água com gás","Gelo"],["Macere as frutas com o suco do limão no copão.","Adicione bastante gelo.","Complete com água com gás e misture."]);
+add("Copão sem álcool Tropical","Sem álcool",0,["Copão","Abacaxi","Maracujá","Hortelã"],["3 fatias de abacaxi","1 maracujá","8 folhas de hortelã","300 ml de água com gás","Gelo"],["Macere o abacaxi, o maracujá e a hortelã no copão.","Adicione bastante gelo.","Complete com água com gás e misture."]);
+add("Busca Brisa com Tônica","Outros",1,["Busca Brisa","Limão"],["60 ml de Busca Brisa","150 ml de água tônica","Gelo","1 rodela de limão"],["Encha um copo alto com gelo.","Adicione o Busca Brisa.","Complete com a tônica e misture.","Decore com a rodela de limão."]);
+add("Busca Brisa com Gelo de Limão e Hortelã","Outros",1,["Busca Brisa","Gelo saborizado","Hortelã"],["60 ml de Busca Brisa","100 ml de água com gás","Cubos de gelo de limão e hortelã"],["Encha um copo alto com os cubos de gelo.","Adicione o Busca Brisa.","Complete com água com gás e misture."]);
+add("Copão de Busca Brisa com Frutas","Outros",1,["Copão","Busca Brisa","Morango"],["100 ml de Busca Brisa","250 ml de água tônica","6 morangos","1 limão em rodelas","Gelo"],["Corte os morangos ao meio.","Coloque as frutas e o gelo no copão.","Adicione o Busca Brisa.","Complete com a tônica e misture."]);
+const A2=s=>{const p=s.split("|");add(p[0],p[1],+p[2],p[3].split(","),p[4].split(";"),p[5].split(";"))};
+["Baly com Vodka|Vodka|1|Energético|50 ml de vodka;250 ml de energético;Gelo|Coloque gelo no copo alto.;Adicione a vodka e complete com o energético.",
+"Vodka com Energético e Fruta|Vodka|1|Energético,Morango|50 ml de vodka;200 ml de energético;4 morangos;Gelo|Corte os morangos ao meio.;Coloque gelo e as frutas no copo alto.;Adicione a vodka e complete com o energético.",
+"Gin com Água de Coco|Gin|1|Coco|50 ml de gin;150 ml de água de coco;1 fatia de limão;Gelo|Coloque gelo no copo alto.;Adicione o gin e a água de coco.;Misture e decore com o limão.",
+"Jack Honey com Tônica|Whisky|1|Mel|50 ml de whisky com mel;150 ml de água tônica;1 fatia de limão;Gelo|Encha o copo alto com gelo.;Adicione o whisky e complete com a tônica.",
+"Campari com Tônica|Outros|1|Campari,Limão|50 ml de Campari;150 ml de água tônica;1 fatia de limão;Gelo|Coloque gelo no copo alto.;Adicione o Campari e complete com a tônica.",
+"Campari com Laranja|Outros|1|Campari,Laranja|50 ml de Campari;150 ml de suco de laranja;Gelo|Coloque gelo no copo alto.;Adicione o Campari e o suco de laranja.;Misture bem.",
+"Gin Tônica com Capim-limão|Gin|1|Capim-limão|50 ml de gin;150 ml de água tônica;2 folhas de capim-limão;Gelo|Macere de leve o capim-limão no copo.;Adicione gelo e o gin.;Complete com a tônica.",
+"Chopp de Vinho|Vinho|1|Vinho,Laranja|200 ml de vinho tinto gelado;1 colher de açúcar;Gelo triturado;1 fatia de laranja|Bata o vinho, o açúcar e o gelo no liquidificador.;Sirva em copo alto com a laranja.",
+"Hugo Spritz|Espumante|1|Hortelã,Limão|60 ml de espumante;30 ml de licor de sabugueiro;60 ml de água com gás;Hortelã;Gelo|Coloque gelo e hortelã na taça.;Adicione o licor e o espumante.;Complete com água com gás e misture.",
+"Limoncello Spritz|Espumante|1|Limão|60 ml de limoncello;90 ml de espumante;30 ml de água com gás;1 fatia de limão;Gelo|Coloque gelo na taça.;Adicione o limoncello e o espumante.;Complete com água com gás.",
+"Aperol Spritz de Maracujá|Espumante|1|Maracujá,Laranja|60 ml de Aperol;90 ml de espumante;30 ml de polpa de maracujá;Gelo|Coloque gelo na taça.;Adicione a polpa, o Aperol e o espumante.;Misture com delicadeza.",
+"Negroni Sbagliato|Espumante|1|Campari,Laranja|30 ml de Campari;30 ml de vermute tinto;60 ml de espumante;1 casca de laranja;Gelo|Coloque gelo num copo baixo.;Adicione o Campari e o vermute.;Complete com o espumante e decore.",
+"Caju Bellini|Espumante|1|Caju|100 ml de suco de caju;100 ml de espumante|Coloque o suco na taça gelada.;Complete com o espumante devagar.",
+"Bellini de Pêssego|Espumante|1|Pêssego|1 pêssego maduro;100 ml de espumante gelado|Bata o pêssego no liquidificador até virar purê.;Coloque 50 ml do purê numa taça.;Complete com o espumante.",
+"Mimosa|Espumante|1|Laranja|75 ml de espumante;75 ml de suco de laranja|Coloque o suco de laranja numa taça.;Complete com o espumante.",
+"Pornstar Martini|Vodka|1|Maracujá|50 ml de vodka;15 ml de licor de baunilha;30 ml de polpa de maracujá;15 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Tommy's Margarita|Tequila|1|Limão|50 ml de tequila;25 ml de suco de limão;15 ml de xarope de agave;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo baixo com gelo.",
+"Margarita Picante|Tequila|1|Limão,Pimenta|50 ml de tequila;25 ml de suco de limão;15 ml de licor de laranja;2 rodelas de pimenta jalapeño;Sal e gelo|Macere a pimenta na coqueteleira.;Adicione o resto e bata com gelo.;Coe num copo baixo com borda de sal.",
+"Ranch Water|Tequila|1|Limão|50 ml de tequila;25 ml de suco de limão;150 ml de água com gás;Gelo|Coloque gelo no copo alto.;Adicione a tequila e o limão.;Complete com água com gás.",
+"Penicillin|Whisky|1|Gengibre,Limão,Mel|50 ml de whisky;25 ml de suco de limão;20 ml de xarope de mel e gengibre;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo baixo com gelo.",
+"Jungle Bird|Rum|1|Abacaxi,Campari|40 ml de rum escuro;20 ml de Campari;40 ml de suco de abacaxi;10 ml de suco de limão;10 ml de xarope de açúcar;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo baixo com gelo.",
+"Paper Plane|Whisky|1|Limão|25 ml de bourbon;25 ml de Aperol;25 ml de Amaro Nonino;25 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Café Gelado com Tônica|Sem álcool|0|Café|1 café expresso frio;150 ml de água tônica;1 casca de laranja;Gelo|Coloque gelo no copo alto.;Adicione a tônica.;Despeje o café por cima devagar.",
+"Matcha Tônica|Sem álcool|0|Matcha|1 colher de chá de matcha;50 ml de água quente;150 ml de água tônica;Gelo|Dissolva o matcha na água quente e deixe esfriar.;Coloque gelo e a tônica no copo alto.;Despeje o matcha por cima.",
+"Matcha Latte Gelado|Sem álcool|0|Matcha|1 colher de chá de matcha;50 ml de água quente;200 ml de leite;1 colher de mel;Gelo|Dissolva o matcha e o mel na água quente.;Coloque gelo e o leite no copo alto.;Despeje o matcha por cima e misture.",
+"Hard Tea|Vodka|1|Chá,Limão|50 ml de vodka;150 ml de chá preto gelado;15 ml de suco de limão;1 colher de mel;Gelo|Coloque gelo no copo alto.;Adicione a vodka, o limão e o mel.;Complete com o chá e misture.",
+"Chá Gelado de Pêssego com Gin|Gin|1|Pêssego,Chá|50 ml de gin;150 ml de chá gelado de pêssego;1 fatia de limão;Gelo|Coloque gelo no copo alto.;Adicione o gin e complete com o chá.;Misture e decore com o limão.",
+"Café com Leite Condensado Gelado|Sem álcool|0|Café|1 café expresso;2 colheres de leite condensado;100 ml de leite;Gelo|Misture o café com o leite condensado até dissolver.;Coloque gelo e o leite no copo alto.;Despeje o café e misture.",
+"Kombucha com Gin|Gin|1|Kombucha|50 ml de gin;150 ml de kombucha;1 fatia de limão;Gelo|Coloque gelo no copo alto.;Adicione o gin e complete com a kombucha.",
+"Spritz sem Álcool|Sem álcool|0|Laranja|60 ml de aperitivo sem álcool;90 ml de água tônica;30 ml de água com gás;1 fatia de laranja;Gelo|Coloque gelo na taça.;Adicione o aperitivo e a tônica.;Complete com água com gás.",
+"Gin Tônica sem Álcool|Sem álcool|0|Limão|50 ml de gin sem álcool;150 ml de água tônica;1 rodela de limão;Gelo|Encha uma taça com gelo.;Adicione o gin sem álcool.;Complete com a tônica e decore.",
+"Kombucha de Frutas|Sem álcool|0|Kombucha,Morango|150 ml de kombucha;5 morangos;Gelo|Macere os morangos no copo.;Adicione gelo e complete com a kombucha.",
+"Água de Coco com Limão e Hortelã|Sem álcool|0|Coco,Limão,Hortelã|200 ml de água de coco;1/2 limão;6 folhas de hortelã;Gelo|Macere a hortelã com o limão no copo.;Adicione gelo e a água de coco.;Misture.",
+"Chá Gelado de Hibisco|Sem álcool|0|Hibisco,Chá|2 colheres de hibisco seco;500 ml de água;2 colheres de açúcar;1 limão;Gelo|Ferva a água numa panela e desligue o fogo.;Adicione o hibisco e deixe em infusão por 10 minutos.;Coe, adoce e deixe esfriar.;Sirva com gelo e limão.",
+"Roy Rogers|Sem álcool|0|Cereja|150 ml de refrigerante de cola;15 ml de grenadine;1 cereja;Gelo|Coloque gelo no copo alto.;Adicione o refrigerante e a grenadine.;Decore com a cereja.",
+"Ginger Beer com Limão e Gengibre|Sem álcool|0|Gengibre,Limão|150 ml de ginger beer;10 ml de suco de limão;2 fatias de gengibre;Gelo|Macere o gengibre no copo.;Adicione gelo e o limão.;Complete com a ginger beer.",
+"Quentão|Cachaça|1|Quente,Gengibre|500 ml de cachaça;1 litro de água;200 g de açúcar;50 g de gengibre;4 paus de canela;Cravo a gosto|Derreta o açúcar numa panela até dourar.;Adicione a água, o gengibre, a canela e o cravo e ferva por 15 minutos.;Adicione a cachaça e desligue o fogo.;Sirva quente em xícaras.",
+"Vinho Quente|Vinho|1|Quente,Laranja|750 ml de vinho tinto;100 g de açúcar;2 paus de canela;4 cravos;1 laranja em fatias|Aqueça tudo numa panela em fogo baixo por 10 minutos, sem ferver.;Sirva quente em xícaras.",
+"Hot Toddy|Whisky|1|Quente,Limão,Mel|50 ml de whisky;1 colher de mel;10 ml de suco de limão;150 ml de água quente;1 pau de canela|Coloque o mel, o limão e o whisky na xícara.;Complete com a água quente e misture.;Decore com a canela.",
+"Chocolate Quente com Licor|Outros|1|Quente,Chocolate|200 ml de leite;50 g de chocolate meio amargo;30 ml de licor de café|Aqueça o leite numa panela e derreta o chocolate.;Adicione o licor e misture.;Sirva quente em xícaras.",
+"Sangria|Vinho|1|Laranja,Maçã,Festa|750 ml de vinho tinto;1 laranja;1 maçã;50 ml de conhaque;3 colheres de açúcar;Gelo|Corte a laranja e a maçã em pedaços.;Misture tudo numa jarra.;Deixe na geladeira por 2 horas e sirva com gelo.",
+"Clericot|Vinho|1|Uva,Maçã,Pêssego|750 ml de vinho branco;1 maçã;10 uvas;1 pêssego;2 colheres de açúcar;Gelo|Corte as frutas em pedaços.;Misture tudo numa jarra com o vinho.;Deixe na geladeira por 1 hora.",
+"Michelada|Cerveja|1|Limão,Tomate|350 ml de cerveja gelada;25 ml de suco de limão;Molho inglês e molho de pimenta;Sal para a borda;Gelo|Passe limão e sal na borda do copo.;Adicione gelo, o limão e os molhos.;Complete com a cerveja.",
+"Shandy|Cerveja|1|Limão|175 ml de cerveja;175 ml de limonada;Gelo|Coloque gelo no copo alto.;Adicione a cerveja e a limonada.;Misture com delicadeza.",
+"Aperol com Cerveja|Cerveja|1|Laranja|50 ml de Aperol;300 ml de cerveja;1 fatia de laranja;Gelo|Coloque gelo no copo alto.;Adicione o Aperol e complete com a cerveja.;Decore com a laranja.",
+"Gin Tônica com Gelo Cristalino|Gin|1|Visual|50 ml de gin;150 ml de água tônica;1 bloco de gelo cristalino|Congele água numa forma de gelo grande dentro de um cooler pequeno sem tampa por 24 horas.;Retire o bloco e corte a parte transparente.;Coloque o gelo na taça, adicione o gin e complete com a tônica.",
+"Margarita com Borda Colorida|Tequila|1|Visual,Limão|50 ml de tequila;25 ml de licor de laranja;25 ml de suco de limão;2 colheres de açúcar colorido;Gelo|Passe limão na borda da taça e apoie no açúcar colorido.;Bata o resto na coqueteleira com gelo.;Coe na taça.",
+"Margarita Frozen|Tequila|1|Frozen,Limão|50 ml de tequila;25 ml de licor de laranja;25 ml de suco de limão;2 xícaras de gelo|Bata tudo no liquidificador até ficar cremoso.;Sirva numa taça com borda de sal.",
+"Daiquiri Frozen|Rum|1|Frozen,Limão|50 ml de rum branco;25 ml de suco de limão;2 colheres de açúcar;2 xícaras de gelo|Bata tudo no liquidificador até ficar cremoso.;Sirva numa taça.",
+"Pôr do Sol Tropical|Vodka|1|Autoral,Abacaxi,Maracujá,Laranja|50 ml de vodka;60 ml de suco de abacaxi;30 ml de polpa de maracujá;30 ml de suco de laranja;10 ml de grenadine;Gelo|Bata tudo menos a grenadine na coqueteleira com gelo.;Coe num copo alto com gelo.;Adicione a grenadine devagar.",
+"Brisa Verde|Gin|1|Autoral,Hortelã,Kiwi|50 ml de gin;2 kiwis;8 folhas de hortelã;2 colheres de açúcar;Água com gás;Gelo|Macere o kiwi com a hortelã e o açúcar.;Adicione o gin e o gelo.;Complete com água com gás.",
+"Rosa do Verão|Gin|1|Autoral,Morango,Lichia|50 ml de gin;5 morangos;6 lichias;15 ml de suco de limão;Gelo|Bata os morangos e as lichias com o gin e o limão na coqueteleira com gelo.;Coe numa taça gelada.",
+"Noite no Trópico|Rum|1|Autoral,Coco,Manga|50 ml de rum;100 ml de manga batida;50 ml de leite de coco;Gelo|Bata tudo no liquidificador com gelo.;Sirva em copo alto.",
+"Fogo e Gelo|Tequila|1|Autoral,Melancia,Pimenta|50 ml de tequila;150 g de melancia;15 ml de suco de limão;1 rodela de pimenta;Gelo|Macere a melancia com a pimenta na coqueteleira.;Adicione o resto e bata com gelo.;Coe num copo baixo com gelo.",
+"Jardim Cítrico|Vodka|1|Autoral,Limão,Manjericão|50 ml de vodka;25 ml de suco de limão;15 ml de xarope de açúcar;5 folhas de manjericão;Gelo|Macere o manjericão na coqueteleira.;Adicione o resto e bata com gelo.;Coe numa taça gelada.",
+"Doce Maracujá|Cachaça|1|Autoral,Maracujá,Gengibre|50 ml de cachaça;1 maracujá;2 fatias de gengibre;2 colheres de açúcar;Gelo|Macere o gengibre com o açúcar na coqueteleira.;Adicione o maracujá, a cachaça e o gelo e bata.;Coe num copo baixo com gelo.",
+"Azul Profundo|Vodka|1|Autoral,Abacaxi|40 ml de vodka;20 ml de curaçao azul;80 ml de suco de abacaxi;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo alto com gelo.",
+"Cerejeira|Whisky|1|Autoral,Cereja|50 ml de whisky;15 ml de licor de cereja;2 gotas de angostura;Gelo;1 cereja|Misture tudo com gelo.;Coe num copo baixo com gelo grande.;Decore com a cereja.",
+"Pôr do Sol sem Álcool|Sem álcool|0|Autoral,Abacaxi,Laranja|100 ml de suco de abacaxi;60 ml de suco de laranja;10 ml de grenadine;Gelo|Coloque gelo no copo alto.;Adicione os sucos e misture.;Finalize com a grenadine devagar.",
+"Floresta Gelada|Sem álcool|0|Autoral,Hortelã,Kiwi|2 kiwis;8 folhas de hortelã;1 limão;2 colheres de açúcar;Água com gás;Gelo|Macere o kiwi com a hortelã, o limão e o açúcar.;Adicione gelo e complete com água com gás.",
+"Rubi|Sem álcool|0|Autoral,Framboesa,Hibisco|10 framboesas;100 ml de chá gelado de hibisco;15 ml de suco de limão;Água com gás;Gelo|Macere as framboesas com o limão no copo.;Adicione gelo e o chá.;Complete com água com gás.",
+"Kamikaze|Vodka|1|Shot,Limão|30 ml de vodka;15 ml de licor de laranja;15 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe em copos de shot.",
+"B-52|Outros|1|Shot,Café|20 ml de licor de café;20 ml de creme irlandês;20 ml de licor de laranja|Coloque o licor de café no copo de shot.;Adicione o creme irlandês devagar, escorrendo por uma colher.;Finalize com o licor de laranja do mesmo jeito.",
+"Tequila Shot|Tequila|1|Shot,Limão|40 ml de tequila;Sal;1 fatia de limão|Coloque a tequila no copo de shot.;Lamba o sal, beba a tequila e chupe o limão.",
+"Lemon Drop Shot|Vodka|1|Shot,Limão|30 ml de vodka;15 ml de suco de limão;1 colher de açúcar;Gelo|Bata tudo na coqueteleira com gelo.;Coe em copos de shot com borda de açúcar.",
+"Jägerbomb|Outros|1|Shot,Energético|30 ml de licor de ervas;100 ml de energético|Coloque o energético num copo baixo.;Solte o copo de shot com o licor dentro e beba na hora.",
+"Shot de Cachaça com Mel e Limão|Cachaça|1|Shot,Limão,Mel|40 ml de cachaça;1 colher de mel;10 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe em copos de shot.",
+"Gelatina de Vodka|Vodka|1|Shot,Festa|1 pacote de gelatina de morango;150 ml de água quente;150 ml de vodka gelada|Dissolva a gelatina na água quente.;Adicione a vodka e misture.;Distribua em copos de shot e leve à geladeira por 4 horas.",
+"Jarra de Caipirinha|Cachaça|1|Festa,Limão|6 limões;6 colheres de açúcar;300 ml de cachaça;Gelo|Corte os limões em pedaços e macere com o açúcar numa jarra.;Adicione a cachaça e o gelo.;Misture e sirva em copos baixos.",
+"Jarra de Gin Tônica|Gin|1|Festa,Limão|300 ml de gin;1 litro de água tônica;2 limões em rodelas;Gelo|Coloque gelo e as rodelas de limão numa jarra.;Adicione o gin e complete com a tônica.;Misture com delicadeza.",
+"Jarra de Mojito|Rum|1|Festa,Hortelã,Limão|300 ml de rum branco;6 limões;1 maço de hortelã;6 colheres de açúcar;Água com gás;Gelo|Macere a hortelã com o limão e o açúcar numa jarra.;Adicione o rum e o gelo.;Complete com água com gás e misture.",
+"Ponche de Frutas Vermelhas|Espumante|1|Festa,Morango,Framboesa|1 garrafa de espumante;300 ml de suco de cranberry;10 morangos;1 xícara de framboesas;Gelo|Corte os morangos ao meio.;Misture o suco e as frutas numa jarra grande.;Adicione o espumante na hora de servir.",
+"Ponche Tropical sem Álcool|Sem álcool|0|Festa,Abacaxi,Maracujá,Laranja|500 ml de suco de abacaxi;300 ml de suco de laranja;100 ml de polpa de maracujá;1 litro de água com gás;Gelo|Misture os sucos e a polpa numa jarra grande.;Adicione gelo.;Complete com água com gás na hora de servir."
+].forEach(A2);
+["Americano|Outros|1|IBA,Campari|30 ml de Campari;30 ml de vermute tinto;Água com gás;1 fatia de laranja;Gelo|Coloque gelo num copo baixo.;Adicione o Campari e o vermute.;Complete com água com gás e decore.",
+"Boulevardier|Whisky|1|IBA,Campari|40 ml de bourbon;30 ml de Campari;30 ml de vermute tinto;Gelo|Misture tudo com gelo.;Coe num copo baixo com gelo grande.",
+"Aviation|Gin|1|IBA,Limão|45 ml de gin;15 ml de maraschino;15 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Sidecar|Outros|1|IBA,Limão|50 ml de conhaque;20 ml de licor de laranja;20 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Daiquiri|Rum|1|IBA,Limão|60 ml de rum branco;25 ml de suco de limão;15 ml de xarope de açúcar;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Singapore Sling|Gin|1|IBA,Abacaxi,Cereja|30 ml de gin;15 ml de licor de cereja;120 ml de suco de abacaxi;15 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo alto com gelo.",
+"Last Word|Gin|1|IBA,Limão|25 ml de gin;25 ml de Chartreuse verde;25 ml de maraschino;25 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Vesper|Gin|1|IBA|60 ml de gin;20 ml de vodka;10 ml de Lillet;1 casca de limão;Gelo|Misture tudo com gelo.;Coe numa taça gelada e decore com a casca.",
+"Sazerac|Whisky|1|IBA|50 ml de whisky de centeio;1 cubo de açúcar;3 gotas de bitter Peychaud;1 casca de limão;Gelo|Dissolva o açúcar com o bitter num copo baixo.;Adicione o whisky e o gelo e misture.;Decore com a casca de limão.",
+"Mint Julep|Whisky|1|IBA,Hortelã|60 ml de bourbon;8 folhas de hortelã;2 colheres de açúcar;Gelo triturado|Macere a hortelã com o açúcar no copo.;Adicione o bourbon e o gelo triturado.;Misture e decore com hortelã.",
+"Bramble|Gin|1|IBA,Limão,Amora|50 ml de gin;25 ml de suco de limão;12 ml de xarope de açúcar;15 ml de licor de amora;Gelo triturado|Misture o gin, o limão e o xarope num copo baixo com gelo.;Finalize com o licor de amora por cima.",
+"Rusty Nail|Whisky|1|IBA|50 ml de whisky;25 ml de Drambuie;Gelo|Coloque gelo num copo baixo.;Adicione o whisky e o Drambuie e misture.",
+"Stinger|Outros|1|IBA,Hortelã|50 ml de conhaque;20 ml de licor de menta branco;Gelo|Misture com gelo.;Coe num copo baixo com gelo.",
+"White Lady|Gin|1|IBA,Limão|40 ml de gin;30 ml de licor de laranja;20 ml de suco de limão;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Planter's Punch|Rum|1|IBA,Laranja,Abacaxi,Limão|45 ml de rum escuro;35 ml de suco de laranja;35 ml de suco de abacaxi;20 ml de suco de limão;10 ml de grenadine;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo alto com gelo.",
+"Hanky Panky|Gin|1|IBA|45 ml de gin;45 ml de vermute tinto;2 gotas de Fernet-Branca;1 casca de laranja;Gelo|Misture com gelo.;Coe numa taça gelada e decore com a casca.",
+"John Collins|Gin|1|IBA,Limão|45 ml de gin;30 ml de suco de limão;15 ml de xarope de açúcar;Água com gás;Gelo|Coloque gelo num copo alto.;Adicione o gin, o limão e o xarope.;Complete com água com gás e misture.",
+"Brandy Alexander|Outros|1|IBA,Chocolate|30 ml de conhaque;30 ml de licor de cacau;30 ml de creme de leite;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Grasshopper|Outros|1|IBA,Hortelã,Chocolate|30 ml de licor de menta verde;30 ml de licor de cacau branco;30 ml de creme de leite;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Mary Pickford|Rum|1|IBA,Abacaxi|50 ml de rum branco;50 ml de suco de abacaxi;10 ml de maraschino;5 ml de grenadine;Gelo|Bata tudo na coqueteleira com gelo.;Coe numa taça gelada.",
+"Rabo de Galo|Cachaça|1|Brasil|40 ml de cachaça;20 ml de vermute tinto;Gelo|Coloque gelo num copo baixo.;Adicione a cachaça e o vermute e misture.",
+"Capeta|Cachaça|1|Brasil,Canela|50 ml de cachaça;50 ml de leite condensado;1 colher de guaraná em pó;1 pitada de canela;Gelo|Bata tudo no liquidificador com gelo.;Sirva num copo baixo.",
+"Garibaldi|Outros|1|Itália,Campari,Laranja|50 ml de Campari;150 ml de suco de laranja;Gelo|Coloque gelo num copo alto.;Adicione o Campari e o suco de laranja.;Misture bem.",
+"Rossini|Espumante|1|Itália,Morango|100 ml de espumante;6 morangos|Bata os morangos no liquidificador até virar purê.;Coloque 50 ml do purê numa taça.;Complete com o espumante.",
+"Carajillo|Outros|1|México,Café|40 ml de licor 43;1 café expresso;Gelo|Coloque gelo num copo baixo.;Adicione o licor.;Despeje o café por cima.",
+"Cantarito|Tequila|1|México,Laranja,Limão|50 ml de tequila;50 ml de suco de laranja;25 ml de suco de limão;Refrigerante de toranja;Sal e gelo|Passe sal na borda do copo.;Adicione gelo, a tequila e os sucos.;Complete com o refrigerante e misture.",
+"Chilcano|Outros|1|Peru,Limão,Gengibre|50 ml de pisco;120 ml de ginger ale;15 ml de suco de limão;Gelo|Coloque gelo num copo alto.;Adicione o pisco e o limão.;Complete com ginger ale.",
+"Piscola|Outros|1|Chile|50 ml de pisco;150 ml de Coca-Cola;1 fatia de limão;Gelo|Coloque gelo num copo alto.;Adicione o pisco e complete com a Coca-Cola.",
+"Fernet com Coca|Outros|1|Argentina|50 ml de fernet;150 ml de Coca-Cola;Gelo|Coloque gelo num copo alto.;Adicione o fernet e complete com a Coca-Cola.",
+"Canchánchara|Cachaça|1|Cuba,Mel,Limão|50 ml de cachaça;1 colher de mel;25 ml de suco de limão;50 ml de água;Gelo|Misture o mel com o limão e a água num copo baixo.;Adicione a cachaça e o gelo.",
+"Highball de Whisky|Whisky|1|Japão|50 ml de whisky;150 ml de água com gás gelada;1 casca de limão;Gelo|Encha um copo alto com gelo.;Adicione o whisky e complete com água com gás.;Misture uma vez e decore.",
+"Chuhai de Limão|Outros|1|Japão,Limão|50 ml de shochu;25 ml de suco de limão;150 ml de água com gás;Gelo|Coloque gelo num copo alto.;Adicione o shochu e o limão.;Complete com água com gás.",
+"Radler|Cerveja|1|Alemanha,Limão|175 ml de cerveja;175 ml de refrigerante de limão|Incline o copo e coloque a cerveja.;Complete com o refrigerante de limão.",
+"Tinto de Verano|Vinho|1|Espanha,Limão|100 ml de vinho tinto;100 ml de refrigerante de limão;1 fatia de limão;Gelo|Coloque gelo num copo alto.;Adicione o vinho e complete com o refrigerante.",
+"Kalimotxo|Vinho|1|Espanha|100 ml de vinho tinto;100 ml de Coca-Cola;Gelo|Coloque gelo num copo alto.;Adicione o vinho e complete com a Coca-Cola.",
+"Poncha|Outros|1|Portugal,Laranja,Limão,Mel|50 ml de aguardente de cana;25 ml de suco de limão;25 ml de suco de laranja;2 colheres de mel|Misture o mel com os sucos num copo baixo.;Adicione a aguardente e misture bem.",
+"Porto Tônico|Outros|1|Portugal,Limão|50 ml de vinho do Porto branco;100 ml de água tônica;1 fatia de limão;Gelo|Coloque gelo num copo alto.;Adicione o vinho do Porto e complete com a tônica.",
+"Pimm's Cup|Outros|1|Inglaterra,Pepino,Morango,Hortelã|50 ml de Pimm's;150 ml de limonada;Fatias de pepino;3 morangos;Hortelã;Gelo|Coloque gelo, o pepino, os morangos e a hortelã numa jarra.;Adicione o Pimm's e complete com a limonada.",
+"Irish Coffee|Whisky|1|Irlanda,Quente,Café|40 ml de whisky irlandês;150 ml de café quente;1 colher de açúcar;Creme de leite batido|Coloque o açúcar e o café quente na xícara.;Adicione o whisky e misture.;Finalize com o creme batido por cima, sem misturar.",
+"French 75|Gin|1|França,Limão|30 ml de gin;15 ml de suco de limão;15 ml de xarope de açúcar;60 ml de espumante;Gelo|Bata o gin, o limão e o xarope na coqueteleira com gelo.;Coe numa taça.;Complete com o espumante.",
+"Kir|Vinho|1|França|100 ml de vinho branco gelado;10 ml de licor de cassis|Coloque o licor de cassis na taça.;Complete com o vinho branco.",
+"Black Russian|Vodka|1|Rússia,Café|50 ml de vodka;25 ml de licor de café;Gelo|Coloque gelo num copo baixo.;Adicione a vodka e o licor e misture.",
+"Rum Punch|Rum|1|Jamaica,Abacaxi,Laranja,Limão|50 ml de rum;60 ml de suco de abacaxi;60 ml de suco de laranja;15 ml de suco de limão;10 ml de grenadine;Gelo|Coloque gelo num copo alto.;Adicione o rum e os sucos.;Finalize com a grenadine.",
+"Hurricane|Rum|1|EUA,Maracujá,Limão|40 ml de rum branco;40 ml de rum escuro;50 ml de polpa de maracujá;25 ml de suco de limão;15 ml de grenadine;Gelo|Bata tudo na coqueteleira com gelo.;Coe num copo alto com gelo."
+].forEach(A2);
+const F=[["Morango","6 morangos"],["Abacaxi","2 fatias de abacaxi"],["Maracujá","1 maracujá"],["Kiwi","2 kiwis"],["Manga","1/2 manga"],["Uva","10 uvas"],["Laranja","1/2 laranja"],["Melancia","150 g de melancia"],["Pêssego","1 pêssego"],["Goiaba","1 goiaba"],["Caju","2 cajus"],["Tangerina","1 tangerina"],["Acerola","10 acerolas"],["Framboesa","10 framboesas"],["Banana","1 banana"],["Melão","150 g de melão"],["Pera","1 pera"],["Coco","100 ml de água de coco"],["Limão","1 limão"],["Lichia","6 lichias"]];
+F.forEach(([f,q])=>{const l=f=="Limão"?[]:["1/2 limão"],lf=f.toLowerCase();
+[["Caipirinha","Cachaça","cachaça"],["Caipiroska","Vodka","vodka"],["Sakerinha","Saquê","saquê"],["Caipirissima","Rum","rum branco"]].forEach(([n,b,a])=>add(`${n} de ${f}`,b,1,[f],[q,...l,"2 colheres de açúcar",`50 ml de ${a}`,"Gelo"],["Corte as frutas em pedaços.","Macere com o açúcar no copo.",`Adicione ${a=="saquê"?"o saquê":a=="rum branco"?"o rum":"a "+a} e bastante gelo.`,"Misture bem."]));
+add(`Batida de ${f}`,"Cachaça",1,[f],[q,"50 ml de cachaça","50 ml de leite condensado","Gelo"],["Bata tudo no liquidificador com gelo.","Sirva gelada."]);
+add(`Mojito de ${f}`,"Rum",1,[f,"Hortelã"],[q,"50 ml de rum branco","10 folhas de hortelã",...l,"2 colheres de açúcar","Água com gás","Gelo"],["Macere a fruta com a hortelã, o limão e o açúcar.","Adicione o rum e o gelo.","Complete com água com gás.","Misture com delicadeza."]);
+add(`Daiquiri de ${f}`,"Rum",1,[f],[q,"50 ml de rum branco","25 ml de suco de limão","2 colheres de açúcar","Gelo"],["Bata tudo no liquidificador com gelo.","Sirva numa taça."]);
+add(`Margarita de ${f}`,"Tequila",1,[f],[q,"50 ml de tequila","25 ml de licor de laranja","25 ml de suco de limão","Sal para a borda","Gelo"],["Bata tudo no liquidificador com gelo.","Sirva numa taça com borda de sal."]);
+add(`Gin Tônica de ${f}`,"Gin",1,[f],["50 ml de gin","150 ml de água tônica",`${f} (para decorar)`,"Gelo"],["Encha uma taça com gelo.","Adicione o gin e a fruta.","Complete com a tônica devagar."]);
+add(`Vodka com suco de ${f}`,"Vodka",1,[f],["50 ml de vodka",`100 ml de suco de ${lf}`,"Gelo"],["Coloque gelo no copo alto.","Adicione a vodka.","Complete com o suco e misture."]);
+if(f!="Limão")add(`Limonada de ${f}`,"Sem álcool",0,[f,"Limão"],[q,"2 limões","3 colheres de açúcar","200 ml de água","Gelo"],["Bata tudo no liquidificador.","Sirva com gelo."]);
+add(`Smoothie de ${f}`,"Sem álcool",0,[f],[q,"100 ml de leite ou iogurte","1 colher de mel","Gelo"],["Bata tudo no liquidificador até ficar cremoso.","Sirva gelado."]);
+add(`Mojito de ${f} sem álcool`,"Sem álcool",0,[f,"Hortelã"],[q,"10 folhas de hortelã",...l,"2 colheres de açúcar","Água com gás","Gelo"],["Macere a fruta com a hortelã, o limão e o açúcar.","Adicione gelo.","Complete com água com gás e misture."]);
+add(`Caipifruta de ${f}`,"Sem álcool",0,[f],[q,...l,"2 colheres de açúcar","Água com gás ou Sprite","Gelo"],["Corte as frutas em pedaços.","Macere com o açúcar no copo.","Adicione gelo e complete com água com gás.","Misture bem."]);
+add(`Soda italiana de ${f}`,"Sem álcool",0,[f],[`30 ml de xarope de ${lf}`,"150 ml de água com gás","1 fatia de limão","Gelo"],["Coloque gelo e o xarope no copo.","Complete com água com gás e misture."]);
+});
+F.forEach(([f,q])=>{
+add(`Cooler de ${f} e Gengibre`,"Vodka",1,["Autoral",f,"Gengibre"],["50 ml de vodka",q,"2 fatias de gengibre","15 ml de suco de limão","Ginger beer","Gelo"],["Macere a fruta com o gengibre no copo.","Adicione o limão, a vodka e o gelo.","Complete com ginger beer e misture."]);
+add(`Gin Sour de ${f}`,"Gin",1,["Autoral",f],["50 ml de gin",q,"25 ml de suco de limão","15 ml de xarope de açúcar","Gelo"],["Bata tudo na coqueteleira com gelo.","Coe num copo baixo com gelo."]);
+add(`Fizz de ${f} e Manjericão`,"Sem álcool",0,["Autoral",f,"Manjericão"],[q,"5 folhas de manjericão","15 ml de suco de limão","1 colher de açúcar","Água com gás","Gelo"],["Macere a fruta com o manjericão e o açúcar no copo.","Adicione o limão e o gelo.","Complete com água com gás e misture."]);
+});
+const BASES=["Todos","Sem álcool","Vodka","Gin","Rum","Tequila","Cachaça","Whisky","Saquê","Cerveja","Vinho","Espumante","Outros"];
+const UTL=["Todos","Liquidificador","Coqueteleira","Coador","Socador (pilão)","Dosador (jigger)","Faca e tábua","Colher bailarina","Taça","Caneca de cobre","Copo baixo","Copo alto","Copão","Copo de shot","Xícara","Panela","Forma de gelo"];
+function ut(d){const s=d[5].join(" ").toLowerCase(),i=d[4].join(" ").toLowerCase(),u=[];
+if(/liquidificador/.test(s))u.push("Liquidificador");
+if(/coqueteleira/.test(s))u.push("Coqueteleira");
+if(/coe /.test(s))u.push("Coador");
+if(/macere/.test(s))u.push("Socador (pilão)");
+if(/\d+ ?ml/.test(i))u.push("Dosador (jigger)");
+if(/corte|casca|rodela|fatia|esprema/.test(s+i))u.push("Faca e tábua");
+if(/misture|mexa|complete/.test(s))u.push("Colher bailarina");
+if(/xícara/.test(s))u.push("Xícara");else if(/copo de shot|copos de shot/.test(s))u.push("Copo de shot");else if(/taça/.test(s))u.push("Taça");else if(/caneca/.test(s))u.push("Caneca de cobre");else if(/copo baixo/.test(s))u.push("Copo baixo");else if(d[3].includes("Copão"))u.push("Copão");else if(!d[3].includes("Gelo saborizado"))u.push("Copo alto");
+if(/forma de gelo/.test(s))u.push("Forma de gelo");if(/panela/.test(s))u.push("Panela");return u}
+const INGS=["Todos",...[...new Set(D.flatMap(d=>d[3]))].sort((a,b)=>a.localeCompare(b,"pt"))];
+let base="Todos",ing="Todos",ute="Todos",q="",tab=1,open=-1,shop=[];
+try{shop=JSON.parse(localStorage.getItem("shop")||"[]")}catch(e){}
+function save(){try{localStorage.setItem("shop",JSON.stringify(shop))}catch(e){}}
+const $=s=>document.querySelector(s),A=$("#app");
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function chips(arr,cur,k){return arr.map(x=>`<button class="chip${x===cur?" on":""}" data-k="${k}" data-v="${x}">${x}</button>`).join("")}
+function render(){
+  $("#t1").className=tab==1?"on":"";$("#t2").className=tab==2?"on":"";
+  $("#t2").textContent="🛒 Lista de compras"+(shop.length?` (${shop.length})`:"");
+  if(tab==2)return renderShop();
+  if(open>=0)return renderDet();
+  const n=q.trim().toLowerCase();
+  const r=D.map((d,i)=>[d,i]).filter(([d])=>(base=="Todos"||(base=="Sem álcool"?!d[2]:d[1]==base))&&(ing=="Todos"||d[3].includes(ing))&&(ute=="Todos"||ut(d).includes(ute))&&(!n||d[0].toLowerCase().includes(n)));
+  A.innerHTML=`<header><h1>🍹 DrinkHub</h1><div class="sub">${r.length} drink${r.length==1?"":"s"}</div><input type="search" id="s" placeholder="Buscar drink…" value="${esc(q)}"></header>
+  <div class="bar"><div class="lbl">Base</div><div class="row">${chips(BASES,base,"b")}</div><div class="lbl">Ingrediente ou tipo</div><div class="row">${chips(INGS,ing,"i")}</div><div class="lbl">Utensílio</div><div class="row">${chips(UTL,ute,"u")}</div></div>
+  <div class="list">${r.length?r.map(([d,i])=>`<button class="card" data-o="${i}"><b>${d[0]}</b><div class="meta">${d[2]?d[1]:"Sem álcool"}</div>${d[3].map(t=>`<span class="tag">${t}</span>`).join("")}</button>`).join(""):'<div class="empty">Nenhum drink com esses filtros.</div>'}</div>`;
+  const s=$("#s");s.oninput=e=>{q=e.target.value;const p=e.target.selectionStart;render();const t=$("#s");t.focus();t.setSelectionRange(p,p)};
+}
+function renderDet(){
+  const d=D[open];
+  A.innerHTML=`<div class="det"><button class="back" id="bk">← Voltar</button><h2>${d[0]}</h2><div class="meta">${d[2]?d[1]:"Sem álcool"}</div>
+  <h3>Ingredientes</h3><ul>${d[4].map(x=>`<li>${x}</li>`).join("")}</ul>
+  <h3>Utensílios</h3><ul>${ut(d).map(x=>`<li>${x}</li>`).join("")}</ul><h3>Modo de preparo</h3><ol>${d[5].map(x=>`<li>${x}</li>`).join("")}</ol>
+  <button class="btn" id="add">🛒 Adicionar à lista de compras</button></div>`;
+  $("#bk").onclick=()=>{if(nav)history.back();else location.hash="inicio"};
+  $("#add").onclick=()=>{[...d[4],...ut(d).map(x=>"🧰 "+x)].forEach(t=>{if(!shop.some(s=>s.t==t))shop.push({t,d:0})});save();$("#add").textContent="✓ Adicionado!";$("#t2").textContent="🛒 Lista de compras ("+shop.length+")"};
+}
+function renderShop(){
+  A.innerHTML=`<header><h1>🛒 Lista de compras</h1><div class="sub">${shop.length} ite${shop.length==1?"m":"ns"}</div></header><div class="list">${shop.length?[0,1].map(g=>{const r=shop.map((s,i)=>[s,i]).filter(([s])=>(s.t.startsWith("🧰 ")?1:0)==g);return r.length?`<div class="lbl">${g?"🧰 Utensílios":"🛒 Ingredientes"} (${r.length})</div>`+r.map(([s,i])=>`<div class="item${s.d?" done":""}"><input type="checkbox" data-c="${i}"${s.d?" checked":""}><span>${esc(s.t)}</span><button class="x" data-x="${i}">✕</button></div>`).join(""):""}).join(""):'<div class="empty">Sua lista está vazia. Abra um drink e toque em “Adicionar à lista de compras”.</div>'}</div>${shop.length?'<button class="clr" id="cl">Limpar tudo</button>':""}`;
+  const c=$("#cl");if(c)c.onclick=()=>{shop=[];save();render()};
+}
+A.onclick=e=>{
+  const b=e.target.closest("[data-k]"),o=e.target.closest("[data-o]"),x=e.target.closest("[data-x]");
+  if(b){const k=b.dataset.k,v=b.dataset.v;if(k=="b")base=v;else if(k=="u")ute=v;else ing=v;render()}
+  else if(o){nav=1;location.hash="drink-"+o.dataset.o}
+  else if(x){shop.splice(+x.dataset.x,1);save();render()}
+};
+A.onchange=e=>{const c=e.target.dataset.c;if(c!==undefined){shop[+c].d=e.target.checked?1:0;save();render()}};
+$("#t1").onclick=()=>{location.hash="inicio"};
+$("#t2").onclick=()=>{location.hash="lista"};
+let nav=0;
+function route(){const h=location.hash.slice(1);if(h=="lista"){tab=2;open=-1}else if(/^drink-\d+$/.test(h)&&D[+h.slice(6)]){tab=1;open=+h.slice(6);scrollTo(0,0)}else{tab=1;open=-1}render()}
+addEventListener("hashchange",route);route();
+render();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
+</body>
+</html>
